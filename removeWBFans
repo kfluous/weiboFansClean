@@ -1,0 +1,70 @@
+/**标记当前排序 */
+var i = 0;
+var waitTimes = 5;
+
+//引入jquery
+var script = document.createElement('script');
+script.src = "https://cdn.bootcss.com/jquery/2.1.2/jquery.js";
+document.getElementsByTagName('head')[0].appendChild(script);
+
+
+//翻页 
+function nextPage() {
+    try {
+        console.log("进行翻页...")
+        $(".W_pages a.next")[0].click()
+    } catch (e) {
+        setTimeout(function () {
+            if (waitTimes > 0) {
+                var times = waitTimes - 1;
+                console.log("网络存在异常，5秒后重试......（第" + waitTimes - times + "次重试）")
+                waitTimes = times;
+            } else {
+                console.log("翻页失败，其手动刷新页面重新执行操作")
+            }
+        }, 5000)
+    }
+    i = 0;
+    sleep(5000);
+}
+
+function skip() {
+    console.log("SKIP FANS :" + $(".follow_list li dl dd.mod_info div a")[i].text)    //粉丝列表名
+    i = i + 1;
+}
+
+function cleanFan() {
+    try {
+        $(".follow_list li dl dd.opt_box div")[i].style.display = "";   //显示管理菜单
+    } catch (e) {
+        nextPage()
+    }
+
+    try {
+        $(".follow_list li dl dd.opt_box div ul + ul li a.tlink ")[0 + 3 * i].click();  //点击移除粉丝
+        $(".layer_mini_opt p a")[0].click()                             //确认移除粉丝
+    } catch (e) {
+        console.log(e);
+        console.log("模拟点击按钮发生异常 (若发生循环报错，请刷新页面重新引入JS文件进行操作)")
+    }
+}
+
+
+
+
+function cleanFans() {
+    setInterval(function () { cleanFan() }, 1000)
+}
+
+/**
+ * 
+ * @param {休眠n毫秒}} n 
+ */
+function sleep(n) {
+    var start = new Date().getTime();
+    while (true) if (new Date().getTime() - start > n) break;
+}
+
+
+
+
